@@ -40,7 +40,7 @@ public class Login extends JFrame {
 	private JPanel contentPane;
 	private JTextField tfUsername;
 	private JPasswordField tfPassword;
-
+// Test
 	private void userLogin(String username, String password) {
 		Connection dbconn = DBConnector.connectDB();
 		if(dbconn != null) {

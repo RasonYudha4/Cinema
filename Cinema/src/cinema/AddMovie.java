@@ -20,12 +20,16 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
+
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
+
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AddMovie extends JFrame {
@@ -37,7 +41,13 @@ public class AddMovie extends JFrame {
 	private JTextField Genre;
 	private JTextField Title;
 	private JTable tbData;
+	public static String username;
 
+	DefaultTableModel model = new DefaultTableModel(
+            new Object[][] {},
+            new String[] {"Movie Title", "Genre", "Duration", "Published Date"}
+    );
+	
 	private void addMovie(String Title, String Genre, String Duration, String PublishedDate) {
 		Connection dbconn = DBConnector.connectDB();
 		if(dbconn != null) {
@@ -48,9 +58,76 @@ public class AddMovie extends JFrame {
 				st.setString(3, Duration);
 				st.setString(4, PublishedDate);
 				st.executeUpdate();
-				JOptionPane.showMessageDialog(null, "User data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+				Object[] row = {Title, Genre, Duration, PublishedDate};
+				model.addRow(row);
+				tbData.setModel(model);
+				JOptionPane.showMessageDialog(null, "Movie data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Connection not available");
+		}
+	}
+
+	private void getAllMovie() {
+		Connection dbconn = DBConnector.connectDB();
+		if(dbconn != null) {
+			try {
+				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("SELECT title, genre, duration, publishedDate FROM Movies");
+				ResultSet rs = st.executeQuery();
+				ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+				
+				int cols = rsmd.getColumnCount();
+				String[] colName = new String[cols];
+				for(int i = 0; i<cols ; cols++) {
+					colName[i] = rsmd.getColumnName(i+1);
+				}
+				model.setColumnIdentifiers(colName);
+				String Title, Genre, Duration, PublishedDate;
+				while(rs.next()) {
+					Title = rs.getString("title");
+					Genre = rs.getString("genre");
+					Duration = rs.getString("duration");
+					PublishedDate = rs.getString("publisheddate");
+					Object[] row = {Title, Genre, Duration, PublishedDate};
+					model.addRow(row);
+				}
+				tbData.setModel(model);
+				rs.close();
+				st.close();
+				dbconn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Connection not available");
+		}
+
+	}
+	
+	private void deleteMovie() {
+		Connection dbconn = DBConnector.connectDB();
+		if(dbconn != null) {
+			try {
+				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("DELETE FROM movies WHERE title = ?");
+				int selectedRow = tbData.getSelectedRow();
+				if (selectedRow >= 0 && JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this movie?", "Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					String title = (String) model.getValueAt(selectedRow, 0);
+					st.setString(1, title); 
+					int rowsDeleted = st.executeUpdate();
+					if (rowsDeleted > 0) {
+					    model.removeRow(selectedRow); 
+					    JOptionPane.showMessageDialog(null, "Movie data deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+					    JOptionPane.showMessageDialog(null, "Failed to delete movie data", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		} else {
@@ -62,7 +139,7 @@ public class AddMovie extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Dashboard frame = new Dashboard();
+					Login frame = new Login();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -74,7 +151,7 @@ public class AddMovie extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddMovie() {
+	public AddMovie(String username) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1208, 607);
 		contentPane = new JPanel();
@@ -92,11 +169,6 @@ public class AddMovie extends JFrame {
 		lblTicketManagingSystem.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTicketManagingSystem.setForeground(Color.WHITE);
 		lblTicketManagingSystem.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 18));
-		
-		DefaultTableModel model = new DefaultTableModel(
-                new Object[][] {},
-                new String[] {"Movie Title", "Genre", "Duration", "Published Date"}
-        );
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(255, 255, 0));
@@ -177,6 +249,7 @@ public class AddMovie extends JFrame {
 		);
 		
 		tbData = new JTable();
+		getAllMovie();
 		tbData.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -188,16 +261,7 @@ public class AddMovie extends JFrame {
 			}
 		});
 		scrollPane.setViewportView(tbData);
-//		tbData.setModel(new DefaultTableModel(
-//			new Object[][] {
-//			},
-//			new String[] {
-//				"Movie Title", "Genre", "Duration", "Published Date"
-//			}
-//		));
 		
-		tbData.setModel(model);
-		tbData.getColumnModel().getColumn(3).setPreferredWidth(145);
 		tbData.setBorder(new BevelBorder(BevelBorder.RAISED, new Color(0, 64, 128), null, null, null));
 		tbData.setColumnSelectionAllowed(true);
 		tbData.setCellSelectionEnabled(true);
@@ -223,17 +287,10 @@ public class AddMovie extends JFrame {
                 	JOptionPane.showMessageDialog(null, "Please Fill all the required form", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                 	addMovie(Title.getText(), Genre.getText(), Duration.getText(), PublishedDate.getText());
-                	
-                    Object[] newRow = {Title.getText(), Genre.getText(), Duration.getText(), PublishedDate.getText()};
-                    
                     Title.setText("");
                     Genre.setText("");
                     Duration.setText("");
                     PublishedDate.setText("");
-
-                    model.addRow(newRow);
-                    
-                    JOptionPane.showMessageDialog(null, "Movie data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
                 
             }
@@ -244,13 +301,7 @@ public class AddMovie extends JFrame {
 		JButton btnNewButton_3_1 = new JButton("Delete");
 		btnNewButton_3_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int i = tbData.getSelectedRow();
-				if(i>=0) {					
-					model.removeRow(i);
-					JOptionPane.showMessageDialog(null, "Movie data deleted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
-				}
+				deleteMovie();
 			}
 		});
 		btnNewButton_3_1.setForeground(new Color(255, 255, 255));
@@ -346,9 +397,9 @@ public class AddMovie extends JFrame {
 		lblNewLabel_1.setForeground(new Color(0, 0, 0));
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 15));
 		
-		JLabel lblNewLabel_1_1 = new JLabel("Username");
-		lblNewLabel_1_1.setForeground(new Color(0, 0, 0));
-		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD, 18));
+		JLabel LoggedUsername = new JLabel(username);
+		LoggedUsername.setForeground(new Color(0, 0, 0));
+		LoggedUsername.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
 		JButton btnNewButton = new JButton("Dashboard");
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -366,6 +417,14 @@ public class AddMovie extends JFrame {
 		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
 		JButton btnSignOut = new JButton("Sign Out");
+		btnSignOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				Login l = new Login();
+				l.setLocationRelativeTo(null);
+				l.setVisible(true);
+			}
+		});
 		btnSignOut.setForeground(new Color(255, 255, 128));
 		btnSignOut.setBackground(new Color(1, 5, 175));
 		btnSignOut.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -376,7 +435,7 @@ public class AddMovie extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-						.addComponent(lblNewLabel_1_1)
+						.addComponent(LoggedUsername)
 						.addComponent(lblNewLabel_1)
 						.addComponent(btnNewButton_1, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
 						.addComponent(btnNewButton_2, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
@@ -389,7 +448,7 @@ public class AddMovie extends JFrame {
 					.addGap(120)
 					.addComponent(lblNewLabel_1)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblNewLabel_1_1, GroupLayout.PREFERRED_SIZE, 19, GroupLayout.PREFERRED_SIZE)
+					.addComponent(LoggedUsername, GroupLayout.PREFERRED_SIZE, 19, GroupLayout.PREFERRED_SIZE)
 					.addGap(101)
 					.addComponent(btnNewButton, GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)

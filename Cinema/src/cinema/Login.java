@@ -40,14 +40,13 @@ public class Login extends JFrame {
 				st.setString(2, password);
 				ResultSet res = st.executeQuery();
 				if(res.next()) {
+					String user = res.getString("username");
 					dispose();
-					Dashboard d = new Dashboard();
+					Dashboard d = new Dashboard(user);
 					d.setTitle("Dashboard");
 					d.setLocationRelativeTo(null);
 					d.setVisible(true);
 				} else {
-					System.out.println("Username" + username);
-					System.out.println("Password" + password);
 					JOptionPane.showMessageDialog(null, "User and password doesn't exist", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (SQLException e) {

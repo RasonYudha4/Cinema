@@ -20,15 +20,13 @@ public class Dashboard extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-
-	/**
-	 * Launch the application.
-	 */
+	public static String username;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Dashboard frame = new Dashboard();
+					Login frame = new Login();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -40,7 +38,8 @@ public class Dashboard extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Dashboard() {
+	public Dashboard(String username) {
+		Dashboard.username = username;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1208, 607);
 		contentPane = new JPanel();
@@ -122,9 +121,9 @@ public class Dashboard extends JFrame {
 		lblNewLabel_1.setForeground(new Color(0, 0, 0));
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 15));
 		
-		JLabel lblNewLabel_1_1 = new JLabel("Username");
-		lblNewLabel_1_1.setForeground(new Color(0, 0, 0));
-		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD, 18));
+		JLabel LoggedUsername = new JLabel(username);
+		LoggedUsername.setForeground(new Color(0, 0, 0));
+		LoggedUsername.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
 		JButton btnNewButton = new JButton("Dashboard");
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -135,7 +134,7 @@ public class Dashboard extends JFrame {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				AddMovie m = new AddMovie();
+				AddMovie m = new AddMovie(username);
 				m.setTitle("Add Movie");
 				m.setLocationRelativeTo(null);
 				m.setVisible(true);
@@ -151,6 +150,14 @@ public class Dashboard extends JFrame {
 		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
 		JButton btnSignOut = new JButton("Sign Out");
+		btnSignOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				Login l = new Login();
+				l.setLocationRelativeTo(null);
+				l.setVisible(true);
+			}
+		});
 		btnSignOut.setForeground(new Color(255, 255, 128));
 		btnSignOut.setBackground(new Color(1, 5, 175));
 		btnSignOut.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -161,7 +168,7 @@ public class Dashboard extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-						.addComponent(lblNewLabel_1_1)
+						.addComponent(LoggedUsername)
 						.addComponent(lblNewLabel_1)
 						.addComponent(btnNewButton_1, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
 						.addComponent(btnNewButton_2, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
@@ -174,7 +181,7 @@ public class Dashboard extends JFrame {
 					.addGap(120)
 					.addComponent(lblNewLabel_1)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblNewLabel_1_1, GroupLayout.PREFERRED_SIZE, 19, GroupLayout.PREFERRED_SIZE)
+					.addComponent(LoggedUsername, GroupLayout.PREFERRED_SIZE, 19, GroupLayout.PREFERRED_SIZE)
 					.addGap(101)
 					.addComponent(btnNewButton, GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -188,4 +195,5 @@ public class Dashboard extends JFrame {
 		panel.setLayout(gl_panel);
 		contentPane.setLayout(gl_contentPane);
 	}
+
 }

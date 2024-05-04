@@ -8,6 +8,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.GroupLayout.Alignment;
@@ -21,21 +22,42 @@ import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class AddMovie extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
+	private JTextField PublishedDate;
+	private JTextField Duration;
+	private JTextField Genre;
+	private JTextField Title;
 	private JTable tbData;
-	private DefaultTableModel model;
 
-	/**
-	 * Launch the application.
-	 */
+	private void addMovie(String Title, String Genre, String Duration, String PublishedDate) {
+		Connection dbconn = DBConnector.connectDB();
+		if(dbconn != null) {
+			try {
+				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("INSERT INTO movies (`title`, `genre`, `duration`, `publisheddate`) VALUES (?, ?, ?, ?)");
+				st.setString(1, Title);
+				st.setString(2, Genre);
+				st.setString(3, Duration);
+				st.setString(4, PublishedDate);
+				st.executeUpdate();
+				JOptionPane.showMessageDialog(null, "User data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Connection not available");
+		}
+	}
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -70,6 +92,11 @@ public class AddMovie extends JFrame {
 		lblTicketManagingSystem.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTicketManagingSystem.setForeground(Color.WHITE);
 		lblTicketManagingSystem.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 18));
+		
+		DefaultTableModel model = new DefaultTableModel(
+                new Object[][] {},
+                new String[] {"Movie Title", "Genre", "Duration", "Published Date"}
+        );
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(255, 255, 0));
@@ -150,14 +177,26 @@ public class AddMovie extends JFrame {
 		);
 		
 		tbData = new JTable();
-		scrollPane.setViewportView(tbData);
-		tbData.setModel(new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Movie Title", "Genre", "Duration", "Published Date"
+		tbData.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int i = tbData.getSelectedRow();
+				Title.setText(model.getValueAt(i, 0).toString());
+				Genre.setText(model.getValueAt(i, 1).toString());
+				Duration.setText(model.getValueAt(i, 2).toString());
+				PublishedDate.setText(model.getValueAt(i, 3).toString());
 			}
-		));
+		});
+		scrollPane.setViewportView(tbData);
+//		tbData.setModel(new DefaultTableModel(
+//			new Object[][] {
+//			},
+//			new String[] {
+//				"Movie Title", "Genre", "Duration", "Published Date"
+//			}
+//		));
+		
+		tbData.setModel(model);
 		tbData.getColumnModel().getColumn(3).setPreferredWidth(145);
 		tbData.setBorder(new BevelBorder(BevelBorder.RAISED, new Color(0, 64, 128), null, null, null));
 		tbData.setColumnSelectionAllowed(true);
@@ -177,12 +216,41 @@ public class AddMovie extends JFrame {
 		lblNewLabel_2_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
 		JButton btnNewButton_3 = new JButton("Insert");
+		btnNewButton_3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(Title.getText().isEmpty() || Genre.getText().isEmpty() || Duration.getText().isEmpty() || PublishedDate.getText().isEmpty()) {
+                	JOptionPane.showMessageDialog(null, "Please Fill all the required form", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                	addMovie(Title.getText(), Genre.getText(), Duration.getText(), PublishedDate.getText());
+                	
+                    Object[] newRow = {Title.getText(), Genre.getText(), Duration.getText(), PublishedDate.getText()};
+                    
+                    Title.setText("");
+                    Genre.setText("");
+                    Duration.setText("");
+                    PublishedDate.setText("");
+
+                    model.addRow(newRow);
+                    
+                    JOptionPane.showMessageDialog(null, "Movie data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+                
+            }
+        });
 		btnNewButton_3.setForeground(new Color(255, 255, 255));
 		btnNewButton_3.setBackground(new Color(0, 0, 255));
 		
 		JButton btnNewButton_3_1 = new JButton("Delete");
 		btnNewButton_3_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int i = tbData.getSelectedRow();
+				if(i>=0) {					
+					model.removeRow(i);
+					JOptionPane.showMessageDialog(null, "Movie data deleted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		btnNewButton_3_1.setForeground(new Color(255, 255, 255));
@@ -194,20 +262,29 @@ public class AddMovie extends JFrame {
 		btnNewButton_3_2.setForeground(new Color(255, 255, 255));
 		btnNewButton_3_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int i = tbData.getSelectedRow();
+				if(i>=0) {
+					model.setValueAt(Title.getText(), i, 0);
+					model.setValueAt(Genre.getText(), i, 1);
+					model.setValueAt(Duration.getText(), i, 2);
+					model.setValueAt(PublishedDate.getText(), i, 3);					
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		
-		textField = new JTextField();
-		textField.setColumns(10);
+		PublishedDate = new JTextField();
+		PublishedDate.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
+		Duration = new JTextField();
+		Duration.setColumns(10);
 		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
+		Genre = new JTextField();
+		Genre.setColumns(10);
 		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
+		Title = new JTextField();
+		Title.setColumns(10);
 		GroupLayout gl_panel_2 = new GroupLayout(panel_2);
 		gl_panel_2.setHorizontalGroup(
 			gl_panel_2.createParallelGroup(Alignment.LEADING)
@@ -229,10 +306,10 @@ public class AddMovie extends JFrame {
 								.addComponent(lblNewLabel_2))
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-								.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE))))
+								.addComponent(Title, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
+								.addComponent(Genre, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
+								.addComponent(Duration, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
+								.addComponent(PublishedDate, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE))))
 					.addGap(27))
 		);
 		gl_panel_2.setVerticalGroup(
@@ -241,19 +318,19 @@ public class AddMovie extends JFrame {
 					.addGap(152)
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNewLabel_2)
-						.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
+						.addComponent(Title, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNewLabel_2_1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
+						.addComponent(Genre, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNewLabel_2_1_1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
+						.addComponent(Duration, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNewLabel_2_1_1_1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField, GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
+						.addComponent(PublishedDate, GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
 					.addGap(46)
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton_3_1, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)

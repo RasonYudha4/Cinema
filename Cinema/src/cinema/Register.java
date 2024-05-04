@@ -45,7 +45,7 @@ public class Register extends JFrame {
 				st.setString(3, address);
 				st.setString(4, username);
 				st.setString(5, password);
-				int res = st.executeUpdate();
+				st.executeUpdate();
 				JOptionPane.showMessageDialog(null, "User data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -55,6 +55,7 @@ public class Register extends JFrame {
 			System.out.println("Connection not available");
 		}
 	}
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

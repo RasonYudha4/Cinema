@@ -107,6 +107,59 @@ public class AddMovie extends JFrame {
 
 	}
 	
+	private void updateMovie() {
+		Connection dbconn = DBConnector.connectDB();
+		if(dbconn != null) {
+			try {
+				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("UPDATE movies SET `title`= ?, `genre`= ?,`duration`= ?,`publisheddate`= ? WHERE title = ?");
+				int selectedRow = tbData.getSelectedRow();
+				if (selectedRow >= 0) {
+				    String title = (String) model.getValueAt(selectedRow, 0); // Assuming title is in column 0
+
+				    String newTitle = Title.getText();
+				    String newGenre = Genre.getText();
+				    String newDuration = Duration.getText();
+				    String newPublishedDate = PublishedDate.getText();
+
+				    int confirmation = JOptionPane.showConfirmDialog(null,
+				    		"Current values:\nTitle: " + model.getValueAt(selectedRow, 0) + "\nGenre: " + model.getValueAt(selectedRow, 1) + "\nDuration: " + model.getValueAt(selectedRow, 2) + "\nPublished Date: " + model.getValueAt(selectedRow, 3) +
+				    		"\n\nUpdate to:\nTitle: " + newTitle + "\nGenre: " + newGenre + "\nDuration: " + newDuration + "\nPublished Date: " + newPublishedDate + "\n\nAre you sure?",
+				            "Update Confirmation", JOptionPane.YES_NO_OPTION);
+
+				    if (confirmation == JOptionPane.YES_OPTION) {
+				    		st.setString(1, newTitle);
+				        	st.setString(2, newGenre);
+				        	st.setString(3, newDuration);
+				        	st.setString(4, newPublishedDate);
+				        	st.setString(5, title); 
+				        	int rowsUpdated = st.executeUpdate();
+				        	
+				        	if (rowsUpdated > 0) {
+				        		model.setValueAt(newTitle, selectedRow, 0); 
+				        	    model.setValueAt(newGenre, selectedRow, 1);  
+				        	    model.setValueAt(newDuration, selectedRow, 2);
+				        	    model.setValueAt(newPublishedDate, selectedRow, 3);
+
+				        	    JOptionPane.showMessageDialog(null, "Movie data updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+				        	} else {
+				        	    JOptionPane.showMessageDialog(null, "Failed to update movie data", "Error", JOptionPane.ERROR_MESSAGE);
+				        	}
+				    } else {
+				        // User canceled update
+				        return;  // Or handle it differently
+				    }
+				} else {
+				    JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Connection not available");
+		}
+	}
+	
 	private void deleteMovie() {
 		Connection dbconn = DBConnector.connectDB();
 		if(dbconn != null) {
@@ -313,15 +366,7 @@ public class AddMovie extends JFrame {
 		btnNewButton_3_2.setForeground(new Color(255, 255, 255));
 		btnNewButton_3_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int i = tbData.getSelectedRow();
-				if(i>=0) {
-					model.setValueAt(Title.getText(), i, 0);
-					model.setValueAt(Genre.getText(), i, 1);
-					model.setValueAt(Duration.getText(), i, 2);
-					model.setValueAt(PublishedDate.getText(), i, 3);					
-				} else {
-					JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
-				}
+				updateMovie();
 			}
 		});
 		

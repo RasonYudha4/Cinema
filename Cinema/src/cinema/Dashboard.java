@@ -97,25 +97,145 @@ public class Dashboard extends JFrame {
 		JPanel panel_1_1 = new JPanel();
 		
 		JPanel panel_1_1_1 = new JPanel();
+		
+		JPanel panel_1_1_2 = new JPanel();
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1.setHorizontalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(panel_1_1, GroupLayout.DEFAULT_SIZE, 942, Short.MAX_VALUE)
-						.addComponent(panel_1_1_1, GroupLayout.PREFERRED_SIZE, 942, GroupLayout.PREFERRED_SIZE))
+					.addComponent(panel_1_1, GroupLayout.PREFERRED_SIZE, 294, GroupLayout.PREFERRED_SIZE)
+					.addGap(28)
+					.addComponent(panel_1_1_1, GroupLayout.PREFERRED_SIZE, 294, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+					.addComponent(panel_1_1_2, GroupLayout.PREFERRED_SIZE, 294, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
 		gl_panel_1.setVerticalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1.createSequentialGroup()
 					.addGap(5)
-					.addComponent(panel_1_1, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-					.addComponent(panel_1_1_1, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+						.addComponent(panel_1_1_1, GroupLayout.PREFERRED_SIZE, 407, GroupLayout.PREFERRED_SIZE)
+						.addComponent(panel_1_1_2, GroupLayout.PREFERRED_SIZE, 407, GroupLayout.PREFERRED_SIZE)
+						.addComponent(panel_1_1, GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE))
 					.addContainerGap())
 		);
+		
+		JLabel lblNewLabel_2_2_1 = new JLabel("Ticket Booked");
+		lblNewLabel_2_2_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2_2_1.setFont(new Font("Tahoma", Font.BOLD, 24));
+		
+		JLabel lblNewLabel_2_1_2 = new JLabel("0");
+		lblNewLabel_2_1_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2_1_2.setFont(new Font("Tahoma", Font.BOLD, 52));
+		
+		JButton btnNewButton_3 = new JButton("Pay All");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO
+			}
+		});
+		btnNewButton_3.setForeground(new Color(255, 255, 255));
+		btnNewButton_3.setBackground(new Color(0, 255, 0));
+		
+		JButton btnNewButton_3_1 = new JButton("Cancel All");
+		btnNewButton_3_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO
+				
+			}
+		});
+		btnNewButton_3_1.setForeground(new Color(255, 255, 255));
+		btnNewButton_3_1.setBackground(new Color(128, 0, 0));
+		GroupLayout gl_panel_1_1_2 = new GroupLayout(panel_1_1_2);
+		gl_panel_1_1_2.setHorizontalGroup(
+			gl_panel_1_1_2.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panel_1_1_2.createSequentialGroup()
+					.addGroup(gl_panel_1_1_2.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_panel_1_1_2.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(lblNewLabel_2_1_2, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
+						.addGroup(Alignment.LEADING, gl_panel_1_1_2.createSequentialGroup()
+							.addGap(50)
+							.addGroup(gl_panel_1_1_2.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblNewLabel_2_2_1, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_panel_1_1_2.createSequentialGroup()
+									.addComponent(btnNewButton_3, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+									.addComponent(btnNewButton_3_1, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)))))
+					.addGap(41))
+		);
+		gl_panel_1_1_2.setVerticalGroup(
+			gl_panel_1_1_2.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_1_1_2.createSequentialGroup()
+					.addGap(34)
+					.addComponent(lblNewLabel_2_2_1, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+					.addGap(64)
+					.addComponent(lblNewLabel_2_1_2, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
+					.addGap(46)
+					.addGroup(gl_panel_1_1_2.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnNewButton_3_1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnNewButton_3, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(48, Short.MAX_VALUE))
+		);
+		panel_1_1_2.setLayout(gl_panel_1_1_2);
+		
+		JLabel lblNewLabel_2_2 = new JLabel("Ticket Buyed");
+		lblNewLabel_2_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2_2.setFont(new Font("Tahoma", Font.BOLD, 24));
+		
+		JLabel lblNewLabel_2_1_1 = new JLabel("0");
+		lblNewLabel_2_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2_1_1.setFont(new Font("Tahoma", Font.BOLD, 52));
+		GroupLayout gl_panel_1_1_1 = new GroupLayout(panel_1_1_1);
+		gl_panel_1_1_1.setHorizontalGroup(
+			gl_panel_1_1_1.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_1_1_1.createSequentialGroup()
+					.addGap(44)
+					.addGroup(gl_panel_1_1_1.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblNewLabel_2_1_1, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNewLabel_2_2, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(52, Short.MAX_VALUE))
+		);
+		gl_panel_1_1_1.setVerticalGroup(
+			gl_panel_1_1_1.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_1_1_1.createSequentialGroup()
+					.addGap(28)
+					.addComponent(lblNewLabel_2_2, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+					.addGap(77)
+					.addComponent(lblNewLabel_2_1_1, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(127, Short.MAX_VALUE))
+		);
+		panel_1_1_1.setLayout(gl_panel_1_1_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("Movies Available");
+		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 24));
+		
+		JLabel lblNewLabel_2_1 = new JLabel("0");
+		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.BOLD, 52));
+		GroupLayout gl_panel_1_1 = new GroupLayout(panel_1_1);
+		gl_panel_1_1.setHorizontalGroup(
+			gl_panel_1_1.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_panel_1_1.createSequentialGroup()
+					.addContainerGap(49, Short.MAX_VALUE)
+					.addGroup(gl_panel_1_1.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblNewLabel_2_1, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNewLabel_2))
+					.addGap(47))
+		);
+		gl_panel_1_1.setVerticalGroup(
+			gl_panel_1_1.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_1_1.createSequentialGroup()
+					.addGap(29)
+					.addComponent(lblNewLabel_2)
+					.addGap(72)
+					.addComponent(lblNewLabel_2_1, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(131, Short.MAX_VALUE))
+		);
+		panel_1_1.setLayout(gl_panel_1_1);
 		panel_1.setLayout(gl_panel_1);
 		
 		JLabel lblNewLabel_1 = new JLabel("Welcome, ");
@@ -204,5 +324,4 @@ public class Dashboard extends JFrame {
 		LeftPanel.setLayout(gl_LeftPanel);
 		contentPane.setLayout(gl_contentPane);
 	}
-
 }

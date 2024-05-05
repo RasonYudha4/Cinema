@@ -42,6 +42,25 @@ public class MovieCRUD extends CRUD {
 		return false;
 	}
 	
+	public int countMovie() {
+		if(dbconn != null) {
+			try {
+				query = (PreparedStatement) dbconn.prepareStatement("SELECT * FROM Movies");
+				ResultSet rs = query.executeQuery();
+				int movies = 0;
+				while (rs.next()) {
+			        movies++;
+			      }
+			     return movies; 
+
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return 0;
+	}
+	
 	public boolean readAll(DefaultTableModel model, String statement) {
 		if(dbconn != null) {
 			try {

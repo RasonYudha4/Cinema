@@ -352,11 +352,29 @@ public class BuyTicket extends JFrame {
 		LoggedUsername.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
 		JButton btnNewButton = new JButton("Dashboard");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				Dashboard d = new Dashboard(loginUser);
+				d.setTitle("Dashboard");
+				d.setLocationRelativeTo(null);
+				d.setVisible(true);
+			}
+		});
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btnNewButton.setForeground(new Color(255, 255, 255));
 		btnNewButton.setBackground(new Color(0, 128, 255));
 		
 		JButton btnNewButton_1 = new JButton("Add Movies");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				AddMovie m = new AddMovie(loginUser);
+				m.setTitle("Add Movie");
+				m.setLocationRelativeTo(null);
+				m.setVisible(true);
+			}
+		});
 		btnNewButton_1.setForeground(new Color(255, 255, 255));
 		btnNewButton_1.setBackground(new Color(0, 128, 255));
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 18));

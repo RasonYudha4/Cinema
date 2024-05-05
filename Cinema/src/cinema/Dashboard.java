@@ -22,6 +22,9 @@ public class Dashboard extends JFrame {
 	private JPanel contentPane;
 	public static String username;
 	
+	TicketCRUD ticketCrud = new TicketCRUD();
+	MovieCRUD movieCrud = new MovieCRUD();
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -126,14 +129,18 @@ public class Dashboard extends JFrame {
 		lblNewLabel_2_2_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2_2_1.setFont(new Font("Tahoma", Font.BOLD, 24));
 		
-		JLabel lblNewLabel_2_1_2 = new JLabel("0");
-		lblNewLabel_2_1_2.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_2_1_2.setFont(new Font("Tahoma", Font.BOLD, 52));
+		JLabel TotalBooked = new JLabel("0");
+		String tickets = String.valueOf(ticketCrud.countUnpaidTickets(loginUser));
+		TotalBooked.setText(tickets);		
+		TotalBooked.setHorizontalAlignment(SwingConstants.CENTER);
+		TotalBooked.setFont(new Font("Tahoma", Font.BOLD, 52));
 		
 		JButton btnNewButton_3 = new JButton("Pay All");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO
+				ticketCrud.setState("UPDATE tickets SET `paid`= ? WHERE userid = ?");
+				ticketCrud.updateAll(loginUser);
+				TotalBooked.setText("0");	
 			}
 		});
 		btnNewButton_3.setForeground(new Color(255, 255, 255));
@@ -142,8 +149,9 @@ public class Dashboard extends JFrame {
 		JButton btnNewButton_3_1 = new JButton("Cancel All");
 		btnNewButton_3_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				
+				ticketCrud.setState("DELETE FROM tickets WHERE userid = ?");
+				ticketCrud.deleteAll(loginUser);
+				TotalBooked.setText("0");	
 			}
 		});
 		btnNewButton_3_1.setForeground(new Color(255, 255, 255));
@@ -155,7 +163,7 @@ public class Dashboard extends JFrame {
 					.addGroup(gl_panel_1_1_2.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel_1_1_2.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(lblNewLabel_2_1_2, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
+							.addComponent(TotalBooked, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
 						.addGroup(Alignment.LEADING, gl_panel_1_1_2.createSequentialGroup()
 							.addGap(50)
 							.addGroup(gl_panel_1_1_2.createParallelGroup(Alignment.LEADING)
@@ -172,7 +180,7 @@ public class Dashboard extends JFrame {
 					.addGap(34)
 					.addComponent(lblNewLabel_2_2_1, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
 					.addGap(64)
-					.addComponent(lblNewLabel_2_1_2, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
+					.addComponent(TotalBooked, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
 					.addGap(46)
 					.addGroup(gl_panel_1_1_2.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnNewButton_3_1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
@@ -185,16 +193,19 @@ public class Dashboard extends JFrame {
 		lblNewLabel_2_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2_2.setFont(new Font("Tahoma", Font.BOLD, 24));
 		
-		JLabel lblNewLabel_2_1_1 = new JLabel("0");
-		lblNewLabel_2_1_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_2_1_1.setFont(new Font("Tahoma", Font.BOLD, 52));
+		// TODO
+		JLabel TicketBuyed = new JLabel("0");
+		String ticketsPaid = String.valueOf(ticketCrud.countPaidTickets(loginUser));
+		TicketBuyed.setText(ticketsPaid);	
+		TicketBuyed.setHorizontalAlignment(SwingConstants.CENTER);
+		TicketBuyed.setFont(new Font("Tahoma", Font.BOLD, 52));
 		GroupLayout gl_panel_1_1_1 = new GroupLayout(panel_1_1_1);
 		gl_panel_1_1_1.setHorizontalGroup(
 			gl_panel_1_1_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1_1_1.createSequentialGroup()
 					.addGap(44)
 					.addGroup(gl_panel_1_1_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblNewLabel_2_1_1, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
+						.addComponent(TicketBuyed, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblNewLabel_2_2, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(52, Short.MAX_VALUE))
 		);
@@ -204,7 +215,7 @@ public class Dashboard extends JFrame {
 					.addGap(28)
 					.addComponent(lblNewLabel_2_2, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
 					.addGap(77)
-					.addComponent(lblNewLabel_2_1_1, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
+					.addComponent(TicketBuyed, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(127, Short.MAX_VALUE))
 		);
 		panel_1_1_1.setLayout(gl_panel_1_1_1);
@@ -213,16 +224,18 @@ public class Dashboard extends JFrame {
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 24));
 		
-		JLabel lblNewLabel_2_1 = new JLabel("0");
-		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.BOLD, 52));
+		JLabel MovieAvailable = new JLabel("0");
+		String movies = String.valueOf(movieCrud.countMovie());
+		MovieAvailable.setText(movies);
+		MovieAvailable.setHorizontalAlignment(SwingConstants.CENTER);
+		MovieAvailable.setFont(new Font("Tahoma", Font.BOLD, 52));
 		GroupLayout gl_panel_1_1 = new GroupLayout(panel_1_1);
 		gl_panel_1_1.setHorizontalGroup(
 			gl_panel_1_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(Alignment.TRAILING, gl_panel_1_1.createSequentialGroup()
 					.addContainerGap(49, Short.MAX_VALUE)
 					.addGroup(gl_panel_1_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblNewLabel_2_1, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
+						.addComponent(MovieAvailable, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblNewLabel_2))
 					.addGap(47))
 		);
@@ -232,7 +245,7 @@ public class Dashboard extends JFrame {
 					.addGap(29)
 					.addComponent(lblNewLabel_2)
 					.addGap(72)
-					.addComponent(lblNewLabel_2_1, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
+					.addComponent(MovieAvailable, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(131, Short.MAX_VALUE))
 		);
 		panel_1_1.setLayout(gl_panel_1_1);

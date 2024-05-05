@@ -32,6 +32,9 @@ public class Register extends JFrame {
 	private JTextField tfPassword;
 	private JButton Login;
 
+	UserCRUD crud = new UserCRUD();
+	User user;
+	
 	private void userRegister(String fname, String lname, String address, String username, String password) {
 		Connection dbconn = DBConnector.connectDB();
 		if(dbconn != null) {
@@ -115,7 +118,11 @@ public class Register extends JFrame {
 				if(fname.isEmpty() || lname.isEmpty() || address.isEmpty() || username.isEmpty() || password.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Please fill all the required form", "Error", JOptionPane.ERROR_MESSAGE);
 				} else {
-					userRegister(fname, lname, address, username, password);
+					// TODO
+					crud.setState("INSERT INTO users (`firstname`, `lastname`, `address`, `username`, `password`) VALUES (?, ?, ?, ?, ?)");
+					user = new User(fname, lname, address, username, password);
+					crud.create(user);
+//					userRegister(fname, lname, address, username, password);
 				}
 			}
 		});

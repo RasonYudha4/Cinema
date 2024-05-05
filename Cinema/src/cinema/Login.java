@@ -16,10 +16,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
@@ -31,32 +27,6 @@ public class Login extends JFrame {
 	private JTextField tfUsername;
 	private JPasswordField tfPassword;
 	
-	private void userLogin(String username, String password) {
-		Connection dbconn = DBConnector.connectDB();
-		if(dbconn != null) {
-			try {
-				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("Select * from users WHERE username = ? AND password = ?");
-				st.setString(1, username);
-				st.setString(2, password);
-				ResultSet res = st.executeQuery();
-				if(res.next()) {
-					String user = res.getString("username");
-					dispose();
-					Dashboard d = new Dashboard(user);
-					d.setTitle("Dashboard");
-					d.setLocationRelativeTo(null);
-					d.setVisible(true);
-				} else {
-					JOptionPane.showMessageDialog(null, "User and password doesn't exist", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("Connection not available");
-		}
-	}
 	/**
 	 * Launch the application.
 	 */
@@ -118,7 +88,14 @@ public class Login extends JFrame {
 				if(username.isEmpty() || password.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Username / Password shouldn't be empty", "Error", JOptionPane.ERROR_MESSAGE);
 				} else {
-					userLogin(username, password);
+					User user = new User(username, password);
+					username = user.getUser();
+					
+					dispose();
+					Dashboard d = new Dashboard(username);
+					d.setTitle("Dashboard");
+					d.setLocationRelativeTo(null);
+					d.setVisible(true);
 				}
 			}
 		});

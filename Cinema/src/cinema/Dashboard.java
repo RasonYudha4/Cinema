@@ -145,6 +145,14 @@ public class Dashboard extends JFrame {
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
 		JButton btnNewButton_2 = new JButton("Buy Ticket");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				BuyTicket bt = new BuyTicket(username);
+				bt.setLocationRelativeTo(null);
+				bt.setVisible(true);
+			}
+		});
 		btnNewButton_2.setForeground(new Color(255, 255, 255));
 		btnNewButton_2.setBackground(new Color(0, 128, 255));
 		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 18));

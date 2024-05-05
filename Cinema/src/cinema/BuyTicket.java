@@ -3,6 +3,10 @@ package cinema;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -10,29 +14,21 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.EmptyBorder;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
-import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-public class AddMovie extends JFrame {
+public class BuyTicket extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField PublishedDate;
-	private JTextField Duration;
-	private JTextField Genre;
-	private JTextField Title;
 	private JTable tbData;
 	public static String username;
 	
@@ -61,7 +57,7 @@ public class AddMovie extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddMovie(String username) {
+	public BuyTicket(String username) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1208, 607);
 		contentPane = new JPanel();
@@ -169,11 +165,7 @@ public class AddMovie extends JFrame {
 		tbData.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int i = tbData.getSelectedRow();
-				Title.setText(model.getValueAt(i, 0).toString());
-				Genre.setText(model.getValueAt(i, 1).toString());
-				Duration.setText(model.getValueAt(i, 2).toString());
-				PublishedDate.setText(model.getValueAt(i, 3).toString());
+				
 			}
 		});
 		scrollPane.setViewportView(tbData);
@@ -183,79 +175,10 @@ public class AddMovie extends JFrame {
 		tbData.setCellSelectionEnabled(true);
 		panel_3.setLayout(gl_panel_3);
 		
-		JLabel lblNewLabel_2 = new JLabel("Title:");
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		
-		JLabel lblNewLabel_2_1 = new JLabel("Genre:");
-		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		
-		JLabel lblNewLabel_2_1_1 = new JLabel("Duration:");
-		lblNewLabel_2_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		
-		JLabel lblNewLabel_2_1_1_1 = new JLabel("Published Date:");
-		lblNewLabel_2_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		
-		JButton btnNewButton_3 = new JButton("Insert");
-		btnNewButton_3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(Title.getText().isEmpty() || Genre.getText().isEmpty() || Duration.getText().isEmpty() || PublishedDate.getText().isEmpty()) {
-                	JOptionPane.showMessageDialog(null, "Please Fill all the required form", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                	String 	title = Title.getText(), 
-                			genre = Genre.getText(), 
-                			duration = Duration.getText(), 
-                			publishedDate = PublishedDate.getText();
-                	
-                	crud.setState("INSERT INTO movies (`title`, `genre`, `duration`, `publisheddate`) VALUES (?, ?, ?, ?)");
-                	movie = new Movie(title, genre, duration, publishedDate);
-                	boolean success = crud.create(movie); 
-
-                	  if (success) {
-                	    Object[] row = {title, genre, duration, publishedDate};
-                	    model.addRow(row);
-                	    JOptionPane.showMessageDialog(null, "Movie data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                	  } else {
-                	    JOptionPane.showMessageDialog(null, "Failed to insert movie data", "Error", JOptionPane.ERROR_MESSAGE);
-                	  }
-                    Title.setText("");
-                    Genre.setText("");
-                    Duration.setText("");
-                    PublishedDate.setText("");
-                }
-                
-            }
-        });
-		btnNewButton_3.setForeground(new Color(255, 255, 255));
-		btnNewButton_3.setBackground(new Color(0, 0, 255));
-		
 		JButton btnNewButton_3_1 = new JButton("Delete");
 		btnNewButton_3_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				crud.setState("DELETE FROM movies WHERE title = ?");
-				int selectedRow = tbData.getSelectedRow();
-				if (selectedRow >= 0 && JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this movie?", "Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-					String 	title = (String) model.getValueAt(selectedRow, 0),
-							genre = Genre.getText(), 
-                			duration = Duration.getText(), 
-                			publishedDate = PublishedDate.getText();
-					
-					movie = new Movie(title, genre, duration, publishedDate);
-					
-					boolean success = crud.delete(movie);
-					if (success) {
-					    model.removeRow(selectedRow); 
-					    JOptionPane.showMessageDialog(null, "Movie data deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-					    JOptionPane.showMessageDialog(null, "Failed to delete movie data", "Error", JOptionPane.ERROR_MESSAGE);
-					}
-					Title.setText("");
-                    Genre.setText("");
-                    Duration.setText("");
-                    PublishedDate.setText("");
-				} else {
-					JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
-				}
+				
 			}
 		});
 		btnNewButton_3_1.setForeground(new Color(255, 255, 255));
@@ -267,111 +190,26 @@ public class AddMovie extends JFrame {
 		btnNewButton_3_2.setForeground(new Color(255, 255, 255));
 		btnNewButton_3_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				crud.setState("UPDATE movies SET `title`= ?, `genre`= ?,`duration`= ?,`publisheddate`= ? WHERE title = ?");
-				int selectedRow = tbData.getSelectedRow();
-				if (selectedRow >= 0) {
-					String 	title = (String) model.getValueAt(selectedRow, 0),
-							newTitle = Title.getText(),
-							newGenre = Genre.getText(),
-							newDuration = Duration.getText(),
-							newPublishedDate = PublishedDate.getText();
-					
-					int confirmation = JOptionPane.showConfirmDialog(null,
-				    		"Current values:\nTitle: " + model.getValueAt(selectedRow, 0) + "\nGenre: " + model.getValueAt(selectedRow, 1) + "\nDuration: " + model.getValueAt(selectedRow, 2) + "\nPublished Date: " + model.getValueAt(selectedRow, 3) +
-				    		"\n\nUpdate to:\nTitle: " + newTitle + "\nGenre: " + newGenre + "\nDuration: " + newDuration + "\nPublished Date: " + newPublishedDate + "\n\nAre you sure?",
-				            "Update Confirmation", JOptionPane.YES_NO_OPTION);
-					
-					movie = new Movie(title, newGenre, newDuration, newPublishedDate);
-					
-					movie.setTitle(newTitle);
-					movie.setGenre(newGenre);
-					movie.setDuration(newDuration);
-					movie.setPublishedDate(newPublishedDate);
-					
-					boolean success = crud.update(confirmation, title, movie);
-					if (success) {
-						model.setValueAt(newTitle, selectedRow, 0); 
-		        	    model.setValueAt(newGenre, selectedRow, 1);  
-		        	    model.setValueAt(newDuration, selectedRow, 2);
-		        	    model.setValueAt(newPublishedDate, selectedRow, 3);
-		
-		        	    JOptionPane.showMessageDialog(null, "Movie data updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-		        	    JOptionPane.showMessageDialog(null, "Failed to update movie data", "Error", JOptionPane.ERROR_MESSAGE);
-		        	}
-					Title.setText("");
-                    Genre.setText("");
-                    Duration.setText("");
-                    PublishedDate.setText("");
-				} else {
-				    JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
-				}
+	
 			}
 		});
-		
-		PublishedDate = new JTextField();
-		PublishedDate.setColumns(10);
-		
-		Duration = new JTextField();
-		Duration.setColumns(10);
-		
-		Genre = new JTextField();
-		Genre.setColumns(10);
-		
-		Title = new JTextField();
-		Title.setColumns(10);
 		GroupLayout gl_panel_2 = new GroupLayout(panel_2);
 		gl_panel_2.setHorizontalGroup(
 			gl_panel_2.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_2.createSequentialGroup()
-					.addGap(23)
-					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_2.createSequentialGroup()
-							.addGap(8)
-							.addComponent(btnNewButton_3, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
-							.addGap(27)
-							.addComponent(btnNewButton_3_2, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-							.addComponent(btnNewButton_3_1, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panel_2.createSequentialGroup()
-							.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblNewLabel_2_1_1_1)
-								.addComponent(lblNewLabel_2_1_1, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblNewLabel_2_1, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblNewLabel_2))
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-								.addComponent(Title, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-								.addComponent(Genre, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-								.addComponent(Duration, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-								.addComponent(PublishedDate, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE))))
+					.addGap(130)
+					.addComponent(btnNewButton_3_2, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+					.addComponent(btnNewButton_3_1, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
 					.addGap(27))
 		);
 		gl_panel_2.setVerticalGroup(
 			gl_panel_2.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel_2.createSequentialGroup()
-					.addGap(152)
-					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_2)
-						.addComponent(Title, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_2_1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-						.addComponent(Genre, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_2_1_1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-						.addComponent(Duration, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_2_1_1_1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-						.addComponent(PublishedDate, GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
-					.addGap(46)
+					.addContainerGap(356, Short.MAX_VALUE)
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton_3_1, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-						.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
-							.addComponent(btnNewButton_3, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-							.addComponent(btnNewButton_3_2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)))
+						.addComponent(btnNewButton_3_2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
 					.addGap(25))
 		);
 		panel_2.setLayout(gl_panel_2);
@@ -386,15 +224,6 @@ public class AddMovie extends JFrame {
 		LoggedUsername.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
 		JButton btnNewButton = new JButton("Dashboard");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-				Dashboard d = new Dashboard(username);
-				d.setTitle("Dashboard");
-				d.setLocationRelativeTo(null);
-				d.setVisible(true);
-			}
-		});
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btnNewButton.setForeground(new Color(255, 255, 255));
 		btnNewButton.setBackground(new Color(0, 128, 255));
@@ -404,13 +233,11 @@ public class AddMovie extends JFrame {
 		btnNewButton_1.setBackground(new Color(0, 128, 255));
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
-		JButton btnNewButton_2 = new JButton("Buy Ticket");
+		JButton btnNewButton_2 = new JButton("Edit Screening");
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				BuyTicket bt = new BuyTicket(username);
-				bt.setLocationRelativeTo(null);
-				bt.setVisible(true);
+				
 			}
 		});
 		btnNewButton_2.setForeground(new Color(255, 255, 255));

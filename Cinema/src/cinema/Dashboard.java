@@ -58,8 +58,8 @@ public class Dashboard extends JFrame {
 		lblTicketManagingSystem.setForeground(Color.WHITE);
 		lblTicketManagingSystem.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 18));
 		
-		JPanel panel = new JPanel();
-		panel.setBackground(new Color(255, 255, 0));
+		JPanel LeftPanel = new JPanel();
+		LeftPanel.setBackground(new Color(255, 255, 0));
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(new Color(0, 64, 128));
@@ -67,7 +67,7 @@ public class Dashboard extends JFrame {
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+					.addComponent(LeftPanel, GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(386)
@@ -90,7 +90,7 @@ public class Dashboard extends JFrame {
 					.addGap(22)
 					.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, 423, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(228, Short.MAX_VALUE))
-				.addComponent(panel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
+				.addComponent(LeftPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
 		);
 		
 		JPanel panel_1_1 = new JPanel();
@@ -161,12 +161,12 @@ public class Dashboard extends JFrame {
 		btnSignOut.setForeground(new Color(255, 255, 128));
 		btnSignOut.setBackground(new Color(1, 5, 175));
 		btnSignOut.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
+		GroupLayout gl_LeftPanel = new GroupLayout(LeftPanel);
+		gl_LeftPanel.setHorizontalGroup(
+			gl_LeftPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_LeftPanel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_LeftPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
 						.addComponent(LoggedUsername)
 						.addComponent(lblNewLabel_1)
@@ -175,9 +175,9 @@ public class Dashboard extends JFrame {
 						.addComponent(btnSignOut, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
 					.addContainerGap())
 		);
-		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
+		gl_LeftPanel.setVerticalGroup(
+			gl_LeftPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_LeftPanel.createSequentialGroup()
 					.addGap(120)
 					.addComponent(lblNewLabel_1)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -192,7 +192,7 @@ public class Dashboard extends JFrame {
 					.addComponent(btnSignOut, GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
 					.addContainerGap())
 		);
-		panel.setLayout(gl_panel);
+		LeftPanel.setLayout(gl_LeftPanel);
 		contentPane.setLayout(gl_contentPane);
 	}
 

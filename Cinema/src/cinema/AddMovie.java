@@ -20,17 +20,10 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
-
-import com.mysql.cj.jdbc.result.ResultSetMetaData;
-
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class AddMovie extends JFrame {
 
@@ -42,151 +35,15 @@ public class AddMovie extends JFrame {
 	private JTextField Title;
 	private JTable tbData;
 	public static String username;
+	
+	//Object
+	MovieCRUD crud = new MovieCRUD();
+	Movie movie;
 
 	DefaultTableModel model = new DefaultTableModel(
             new Object[][] {},
             new String[] {"Movie Title", "Genre", "Duration", "Published Date"}
     );
-	
-	private void addMovie(String Title, String Genre, String Duration, String PublishedDate) {
-		Connection dbconn = DBConnector.connectDB();
-		if(dbconn != null) {
-			try {
-				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("INSERT INTO movies (`title`, `genre`, `duration`, `publisheddate`) VALUES (?, ?, ?, ?)");
-				st.setString(1, Title);
-				st.setString(2, Genre);
-				st.setString(3, Duration);
-				st.setString(4, PublishedDate);
-				st.executeUpdate();
-				Object[] row = {Title, Genre, Duration, PublishedDate};
-				model.addRow(row);
-				tbData.setModel(model);
-				JOptionPane.showMessageDialog(null, "Movie data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("Connection not available");
-		}
-	}
-
-	private void getAllMovie() {
-		Connection dbconn = DBConnector.connectDB();
-		if(dbconn != null) {
-			try {
-				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("SELECT title, genre, duration, publishedDate FROM Movies");
-				ResultSet rs = st.executeQuery();
-				ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
-				
-				int cols = rsmd.getColumnCount();
-				String[] colName = new String[cols];
-				for(int i = 0; i<cols ; cols++) {
-					colName[i] = rsmd.getColumnName(i+1);
-				}
-				model.setColumnIdentifiers(colName);
-				String Title, Genre, Duration, PublishedDate;
-				while(rs.next()) {
-					Title = rs.getString("title");
-					Genre = rs.getString("genre");
-					Duration = rs.getString("duration");
-					PublishedDate = rs.getString("publisheddate");
-					Object[] row = {Title, Genre, Duration, PublishedDate};
-					model.addRow(row);
-				}
-				tbData.setModel(model);
-				rs.close();
-				st.close();
-				dbconn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("Connection not available");
-		}
-
-	}
-	
-	private void updateMovie() {
-		Connection dbconn = DBConnector.connectDB();
-		if(dbconn != null) {
-			try {
-				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("UPDATE movies SET `title`= ?, `genre`= ?,`duration`= ?,`publisheddate`= ? WHERE title = ?");
-				int selectedRow = tbData.getSelectedRow();
-				if (selectedRow >= 0) {
-				    String title = (String) model.getValueAt(selectedRow, 0); // Assuming title is in column 0
-
-				    String newTitle = Title.getText();
-				    String newGenre = Genre.getText();
-				    String newDuration = Duration.getText();
-				    String newPublishedDate = PublishedDate.getText();
-
-				    int confirmation = JOptionPane.showConfirmDialog(null,
-				    		"Current values:\nTitle: " + model.getValueAt(selectedRow, 0) + "\nGenre: " + model.getValueAt(selectedRow, 1) + "\nDuration: " + model.getValueAt(selectedRow, 2) + "\nPublished Date: " + model.getValueAt(selectedRow, 3) +
-				    		"\n\nUpdate to:\nTitle: " + newTitle + "\nGenre: " + newGenre + "\nDuration: " + newDuration + "\nPublished Date: " + newPublishedDate + "\n\nAre you sure?",
-				            "Update Confirmation", JOptionPane.YES_NO_OPTION);
-
-				    if (confirmation == JOptionPane.YES_OPTION) {
-				    		st.setString(1, newTitle);
-				        	st.setString(2, newGenre);
-				        	st.setString(3, newDuration);
-				        	st.setString(4, newPublishedDate);
-				        	st.setString(5, title); 
-				        	int rowsUpdated = st.executeUpdate();
-				        	
-				        	if (rowsUpdated > 0) {
-				        		model.setValueAt(newTitle, selectedRow, 0); 
-				        	    model.setValueAt(newGenre, selectedRow, 1);  
-				        	    model.setValueAt(newDuration, selectedRow, 2);
-				        	    model.setValueAt(newPublishedDate, selectedRow, 3);
-
-				        	    JOptionPane.showMessageDialog(null, "Movie data updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-				        	} else {
-				        	    JOptionPane.showMessageDialog(null, "Failed to update movie data", "Error", JOptionPane.ERROR_MESSAGE);
-				        	}
-				    } else {
-				        // User canceled update
-				        return;  // Or handle it differently
-				    }
-				} else {
-				    JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("Connection not available");
-		}
-	}
-	
-	private void deleteMovie() {
-		Connection dbconn = DBConnector.connectDB();
-		if(dbconn != null) {
-			try {
-				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("DELETE FROM movies WHERE title = ?");
-				int selectedRow = tbData.getSelectedRow();
-				if (selectedRow >= 0 && JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this movie?", "Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-					String title = (String) model.getValueAt(selectedRow, 0);
-					st.setString(1, title); 
-					int rowsDeleted = st.executeUpdate();
-					if (rowsDeleted > 0) {
-					    model.removeRow(selectedRow); 
-					    JOptionPane.showMessageDialog(null, "Movie data deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-					    JOptionPane.showMessageDialog(null, "Failed to delete movie data", "Error", JOptionPane.ERROR_MESSAGE);
-					}
-				} else {
-					JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("Connection not available");
-		}
-	}
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -223,8 +80,8 @@ public class AddMovie extends JFrame {
 		lblTicketManagingSystem.setForeground(Color.WHITE);
 		lblTicketManagingSystem.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 18));
 		
-		JPanel panel = new JPanel();
-		panel.setBackground(new Color(255, 255, 0));
+		JPanel LeftPanel = new JPanel();
+		LeftPanel.setBackground(new Color(255, 255, 0));
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(new Color(0, 64, 128));
@@ -232,7 +89,7 @@ public class AddMovie extends JFrame {
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+					.addComponent(LeftPanel, GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(386)
@@ -255,7 +112,7 @@ public class AddMovie extends JFrame {
 					.addGap(22)
 					.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, 423, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(228, Short.MAX_VALUE))
-				.addComponent(panel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
+				.addComponent(LeftPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
 		);
 		
 		JPanel panel_2 = new JPanel();
@@ -302,7 +159,13 @@ public class AddMovie extends JFrame {
 		);
 		
 		tbData = new JTable();
-		getAllMovie();
+
+		boolean success = crud.readAll(model, "SELECT title, genre, duration, publishedDate FROM Movies");
+		if (success) {
+			tbData.setModel(model);
+		} else {
+			JOptionPane.showMessageDialog(null, "No Data Available", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 		tbData.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -339,7 +202,22 @@ public class AddMovie extends JFrame {
                 if(Title.getText().isEmpty() || Genre.getText().isEmpty() || Duration.getText().isEmpty() || PublishedDate.getText().isEmpty()) {
                 	JOptionPane.showMessageDialog(null, "Please Fill all the required form", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                	addMovie(Title.getText(), Genre.getText(), Duration.getText(), PublishedDate.getText());
+                	String 	title = Title.getText(), 
+                			genre = Genre.getText(), 
+                			duration = Duration.getText(), 
+                			publishedDate = PublishedDate.getText();
+                	
+                	crud.setState("INSERT INTO movies (`title`, `genre`, `duration`, `publisheddate`) VALUES (?, ?, ?, ?)");
+                	movie = new Movie(title, genre, duration, publishedDate);
+                	boolean success = crud.create(movie); 
+
+                	  if (success) {
+                	    Object[] row = {title, genre, duration, publishedDate};
+                	    model.addRow(row);
+                	    JOptionPane.showMessageDialog(null, "Movie data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                	  } else {
+                	    JOptionPane.showMessageDialog(null, "Failed to insert movie data", "Error", JOptionPane.ERROR_MESSAGE);
+                	  }
                     Title.setText("");
                     Genre.setText("");
                     Duration.setText("");
@@ -354,7 +232,30 @@ public class AddMovie extends JFrame {
 		JButton btnNewButton_3_1 = new JButton("Delete");
 		btnNewButton_3_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				deleteMovie();
+				crud.setState("DELETE FROM movies WHERE title = ?");
+				int selectedRow = tbData.getSelectedRow();
+				if (selectedRow >= 0 && JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this movie?", "Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					String 	title = (String) model.getValueAt(selectedRow, 0),
+							genre = Genre.getText(), 
+                			duration = Duration.getText(), 
+                			publishedDate = PublishedDate.getText();
+					
+					movie = new Movie(title, genre, duration, publishedDate);
+					
+					boolean success = crud.delete(movie);
+					if (success) {
+					    model.removeRow(selectedRow); 
+					    JOptionPane.showMessageDialog(null, "Movie data deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+					    JOptionPane.showMessageDialog(null, "Failed to delete movie data", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					Title.setText("");
+                    Genre.setText("");
+                    Duration.setText("");
+                    PublishedDate.setText("");
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		btnNewButton_3_1.setForeground(new Color(255, 255, 255));
@@ -366,7 +267,45 @@ public class AddMovie extends JFrame {
 		btnNewButton_3_2.setForeground(new Color(255, 255, 255));
 		btnNewButton_3_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateMovie();
+				crud.setState("UPDATE movies SET `title`= ?, `genre`= ?,`duration`= ?,`publisheddate`= ? WHERE title = ?");
+				int selectedRow = tbData.getSelectedRow();
+				if (selectedRow >= 0) {
+					String 	title = (String) model.getValueAt(selectedRow, 0),
+							newTitle = Title.getText(),
+							newGenre = Genre.getText(),
+							newDuration = Duration.getText(),
+							newPublishedDate = PublishedDate.getText();
+					
+					int confirmation = JOptionPane.showConfirmDialog(null,
+				    		"Current values:\nTitle: " + model.getValueAt(selectedRow, 0) + "\nGenre: " + model.getValueAt(selectedRow, 1) + "\nDuration: " + model.getValueAt(selectedRow, 2) + "\nPublished Date: " + model.getValueAt(selectedRow, 3) +
+				    		"\n\nUpdate to:\nTitle: " + newTitle + "\nGenre: " + newGenre + "\nDuration: " + newDuration + "\nPublished Date: " + newPublishedDate + "\n\nAre you sure?",
+				            "Update Confirmation", JOptionPane.YES_NO_OPTION);
+					
+					movie = new Movie(title, newGenre, newDuration, newPublishedDate);
+					
+					movie.setTitle(newTitle);
+					movie.setGenre(newGenre);
+					movie.setDuration(newDuration);
+					movie.setPublishedDate(newPublishedDate);
+					
+					boolean success = crud.update(confirmation, title, movie);
+					if (success) {
+						model.setValueAt(newTitle, selectedRow, 0); 
+		        	    model.setValueAt(newGenre, selectedRow, 1);  
+		        	    model.setValueAt(newDuration, selectedRow, 2);
+		        	    model.setValueAt(newPublishedDate, selectedRow, 3);
+		
+		        	    JOptionPane.showMessageDialog(null, "Movie data updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+		        	    JOptionPane.showMessageDialog(null, "Failed to update movie data", "Error", JOptionPane.ERROR_MESSAGE);
+		        	}
+					Title.setText("");
+                    Genre.setText("");
+                    Duration.setText("");
+                    PublishedDate.setText("");
+				} else {
+				    JOptionPane.showMessageDialog(null, "Please select a row first", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		
@@ -473,12 +412,12 @@ public class AddMovie extends JFrame {
 		btnSignOut.setForeground(new Color(255, 255, 128));
 		btnSignOut.setBackground(new Color(1, 5, 175));
 		btnSignOut.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
+		GroupLayout gl_LeftPanel = new GroupLayout(LeftPanel);
+		gl_LeftPanel.setHorizontalGroup(
+			gl_LeftPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_LeftPanel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_LeftPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
 						.addComponent(LoggedUsername)
 						.addComponent(lblNewLabel_1)
@@ -487,9 +426,9 @@ public class AddMovie extends JFrame {
 						.addComponent(btnSignOut, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
 					.addContainerGap())
 		);
-		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
+		gl_LeftPanel.setVerticalGroup(
+			gl_LeftPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_LeftPanel.createSequentialGroup()
 					.addGap(120)
 					.addComponent(lblNewLabel_1)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -504,7 +443,7 @@ public class AddMovie extends JFrame {
 					.addComponent(btnSignOut, GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
 					.addContainerGap())
 		);
-		panel.setLayout(gl_panel);
+		LeftPanel.setLayout(gl_LeftPanel);
 		contentPane.setLayout(gl_contentPane);
 	}
 }

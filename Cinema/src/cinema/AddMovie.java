@@ -61,7 +61,8 @@ public class AddMovie extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddMovie(String username) {
+	public AddMovie(User user) {
+		User loginUser = user;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1208, 607);
 		contentPane = new JPanel();
@@ -381,7 +382,7 @@ public class AddMovie extends JFrame {
 		lblNewLabel_1.setForeground(new Color(0, 0, 0));
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 15));
 		
-		JLabel LoggedUsername = new JLabel(username);
+		JLabel LoggedUsername = new JLabel(loginUser.getUser());
 		LoggedUsername.setForeground(new Color(0, 0, 0));
 		LoggedUsername.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
@@ -389,7 +390,7 @@ public class AddMovie extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				Dashboard d = new Dashboard(username);
+				Dashboard d = new Dashboard(loginUser);
 				d.setTitle("Dashboard");
 				d.setLocationRelativeTo(null);
 				d.setVisible(true);
@@ -408,7 +409,7 @@ public class AddMovie extends JFrame {
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				BuyTicket bt = new BuyTicket(username);
+				BuyTicket bt = new BuyTicket(loginUser);
 				bt.setLocationRelativeTo(null);
 				bt.setVisible(true);
 			}

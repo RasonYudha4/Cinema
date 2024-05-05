@@ -26,7 +26,7 @@ public class Login extends JFrame {
 	private JPanel contentPane;
 	private JTextField tfUsername;
 	private JPasswordField tfPassword;
-	
+	User user;
 	/**
 	 * Launch the application.
 	 */
@@ -88,11 +88,11 @@ public class Login extends JFrame {
 				if(username.isEmpty() || password.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Username / Password shouldn't be empty", "Error", JOptionPane.ERROR_MESSAGE);
 				} else {
-					User user = new User(username, password);
+					user = new User(username, password);
 					username = user.getUser();
 					
 					dispose();
-					Dashboard d = new Dashboard(username);
+					Dashboard d = new Dashboard(user);
 					d.setTitle("Dashboard");
 					d.setLocationRelativeTo(null);
 					d.setVisible(true);

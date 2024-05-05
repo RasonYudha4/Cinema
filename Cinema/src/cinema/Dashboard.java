@@ -38,8 +38,9 @@ public class Dashboard extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Dashboard(String username) {
-		Dashboard.username = username;
+	public Dashboard(User user) {
+		User loginUser = user;
+		Dashboard.username = loginUser.getUser();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1208, 607);
 		contentPane = new JPanel();
@@ -121,7 +122,7 @@ public class Dashboard extends JFrame {
 		lblNewLabel_1.setForeground(new Color(0, 0, 0));
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 15));
 		
-		JLabel LoggedUsername = new JLabel(username);
+		JLabel LoggedUsername = new JLabel(loginUser.getUser());
 		LoggedUsername.setForeground(new Color(0, 0, 0));
 		LoggedUsername.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
@@ -134,7 +135,7 @@ public class Dashboard extends JFrame {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				AddMovie m = new AddMovie(username);
+				AddMovie m = new AddMovie(loginUser);
 				m.setTitle("Add Movie");
 				m.setLocationRelativeTo(null);
 				m.setVisible(true);
@@ -148,7 +149,7 @@ public class Dashboard extends JFrame {
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				BuyTicket bt = new BuyTicket(username);
+				BuyTicket bt = new BuyTicket(loginUser);
 				bt.setLocationRelativeTo(null);
 				bt.setVisible(true);
 			}

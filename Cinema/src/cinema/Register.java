@@ -16,9 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
 public class Register extends JFrame {
@@ -34,27 +31,6 @@ public class Register extends JFrame {
 
 	UserCRUD crud = new UserCRUD();
 	User user;
-	
-	private void userRegister(String fname, String lname, String address, String username, String password) {
-		Connection dbconn = DBConnector.connectDB();
-		if(dbconn != null) {
-			try {
-				PreparedStatement st = (PreparedStatement) dbconn.prepareStatement("INSERT INTO users (`firstname`, `lastname`, `address`, `username`, `password`) VALUES (?, ?, ?, ?, ?)");
-				st.setString(1, fname);
-				st.setString(2, lname);
-				st.setString(3, address);
-				st.setString(4, username);
-				st.setString(5, password);
-				st.executeUpdate();
-				JOptionPane.showMessageDialog(null, "User data inserted succesfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("Connection not available");
-		}
-	}
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

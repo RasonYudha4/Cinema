@@ -51,8 +51,7 @@ public class MovieCRUD extends CRUD {
 			        String Title = rs.getString("title");
 			        String Genre = rs.getString("genre");
 			        String Duration = rs.getString("duration");
-			        String PublishedDate = rs.getString("publisheddate");
-			        Object[] row = {Title, Genre, Duration, PublishedDate};
+			        Object[] row = {Title, Genre, Duration};
 			        model.addRow(row);
 			      }
 			      return true; // Indicate successful data retrieval

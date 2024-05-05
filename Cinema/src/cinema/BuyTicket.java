@@ -25,6 +25,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JSpinner;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.SpinnerNumberModel;
 
 public class BuyTicket extends JFrame {
 
@@ -34,12 +37,14 @@ public class BuyTicket extends JFrame {
 	public static String username;
 	
 	//Object
-	MovieCRUD crud = new MovieCRUD();
+	TicketCRUD ticketCrud = new TicketCRUD();
+	MovieCRUD movieCrud = new MovieCRUD();
+	Ticket ticket;
 	Movie movie;
 
 	DefaultTableModel model = new DefaultTableModel(
             new Object[][] {},
-            new String[] {"Movie Title", "Genre", "Duration", "Published Date"}
+            new String[] {"Movie Title", "Genre", "Duration"}
     );
 	private JTextField Title;
 	private JTextField Genre;
@@ -61,7 +66,8 @@ public class BuyTicket extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public BuyTicket(String username) {
+	public BuyTicket(User user) {
+		User loginUser = user;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1208, 607);
 		contentPane = new JPanel();
@@ -158,9 +164,22 @@ public class BuyTicket extends JFrame {
 					.addContainerGap())
 		);
 		
+		JLabel price = new JLabel("0");
+		JSpinner quantity = new JSpinner();
+		quantity.setModel(new SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+		quantity.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int quantityValue = (int) quantity.getValue();
+				int amount = quantityValue * 15;
+				
+				String quantityValueString = String.valueOf(amount);
+				price.setText(quantityValueString  + " $");	
+			}
+		});
+		
 		tbData = new JTable();
 
-		boolean success = crud.readAll(model, "SELECT title, genre, duration, publishedDate FROM Movies");
+		boolean success = movieCrud.readAll(model, "SELECT title, genre, duration FROM Movies");
 		if (success) {
 			tbData.setModel(model);
 		} else {
@@ -169,7 +188,10 @@ public class BuyTicket extends JFrame {
 		tbData.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
+				int i = tbData.getSelectedRow();
+				Title.setText(model.getValueAt(i, 0).toString());
+				Genre.setText(model.getValueAt(i, 1).toString());
+				Duration.setText(model.getValueAt(i, 2).toString());
 			}
 		});
 		scrollPane.setViewportView(tbData);
@@ -185,11 +207,52 @@ public class BuyTicket extends JFrame {
 		Buy.setForeground(new Color(255, 255, 255));
 		Buy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-	
+				// TODO Buy
+				int amount = (int) quantity.getValue();
+				int selectedRow = tbData.getSelectedRow();
+				if (selectedRow >= 0 ) {
+					String 	title = Title.getText(),
+							genre = Genre.getText(),
+							duration = Duration.getText();
+					
+					movie = new Movie (title, genre, duration);
+					int movieId = movie.getId();
+					int userId = loginUser.getId();  
+					
+					ticket = new Ticket(userId, movieId);
+					ticket.setAmount(amount);
+					ticket.setPaid(1);
+					
+					ticketCrud.setState("INSERT INTO Tickets (`userId`, `movieId`, `amount`, `paid`) VALUES (?, ?, ?, ?)");
+					ticketCrud.create(ticket);
+				}
 			}
 		});
 		
 		JButton Book = new JButton("Book");
+		Book.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO Book
+				int amount = (int) quantity.getValue();
+				int selectedRow = tbData.getSelectedRow();
+				if (selectedRow >= 0 ) {
+					String 	title = Title.getText(),
+							genre = Genre.getText(),
+							duration = Duration.getText();
+					
+					movie = new Movie (title, genre, duration);
+					int movieId = movie.getId();
+					int userId = loginUser.getId();  
+					
+					ticket = new Ticket(userId, movieId);
+					ticket.setAmount(amount);
+					ticket.setPaid(0);
+					
+					ticketCrud.setState("INSERT INTO Tickets (`userId`, `movieId`, `amount`, `paid`) VALUES (?, ?, ?, ?)");
+					ticketCrud.create(ticket);
+				}
+			}
+		});
 		Book.setForeground(new Color(0, 0, 0));
 		Book.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		Book.setBackground(new Color(255, 255, 0));
@@ -212,15 +275,12 @@ public class BuyTicket extends JFrame {
 		Duration = new JTextField();
 		Duration.setColumns(10);
 		
-		JSpinner quantity = new JSpinner();
-		
 		JLabel lblNewLabel_2_1_1_1 = new JLabel("Quantity:");
 		lblNewLabel_2_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
 		JLabel lblNewLabel_2_1_1_1_1 = new JLabel("Price: ");
 		lblNewLabel_2_1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		JLabel price = new JLabel("0");
 		price.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		GroupLayout gl_panel_2 = new GroupLayout(panel_2);
 		gl_panel_2.setHorizontalGroup(
@@ -287,7 +347,7 @@ public class BuyTicket extends JFrame {
 		lblNewLabel_1.setForeground(new Color(0, 0, 0));
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 15));
 		
-		JLabel LoggedUsername = new JLabel(username);
+		JLabel LoggedUsername = new JLabel(loginUser.getUser());
 		LoggedUsername.setForeground(new Color(0, 0, 0));
 		LoggedUsername.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
